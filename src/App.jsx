@@ -5,6 +5,7 @@ import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import Notify from './components/Notify';
+import BornForm from './components/BornForm';
 
 import { ALL_AUTHORS } from './queries';
 
@@ -27,19 +28,22 @@ const App = () => {
 
   return (
     <div>
-    <Notify errorMessage={errorMessage} />
+      <Notify errorMessage={errorMessage} />
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
       </div>
-
-      {page === 'authors' && <Authors authors={result.data.allAuthors} />}
+      {page === 'authors' && (
+        <>
+          <Authors authors={result.data.allAuthors} />
+          <BornForm setError={notify} authors={result.data.allAuthors}/>
+        </>
+      )}
       {page === 'books' && <Books />}
 
-      <NewBook show={page === 'add'} setError={notify} />
+      {page === 'add' && <NewBook show={page === 'add'} setError={notify} />}
     </div>
   );
 };
-
 export default App;
