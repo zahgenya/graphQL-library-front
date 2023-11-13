@@ -9,6 +9,10 @@ const BornForm = ({ setError, authors }) => {
 
   const [changeDate, result] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
+    onError: (error) => {
+      const message = error.graphQLErrors.map((e) => e.message).join('\n');
+      setError(message);
+    },
   });
 
   useEffect(() => {
