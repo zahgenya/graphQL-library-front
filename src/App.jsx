@@ -7,6 +7,7 @@ import NewBook from './components/NewBook';
 import Notify from './components/Notify';
 import BornForm from './components/BornForm';
 import LoginForm from './components/LoginForm';
+import Recommendations from './components/Recommendations';
 
 import { ALL_AUTHORS } from './queries';
 
@@ -45,6 +46,7 @@ const App = () => {
         {token ? (
           <>
             <button onClick={() => setPage('add')}>add book</button>
+            <button onClick={() => setPage('recommendations')}>recommend</button>
             <button onClick={logout}>logout</button>
           </>
         ) : (
@@ -66,6 +68,10 @@ const App = () => {
 
       {page === 'login' && (
         <LoginForm setError={notify} setToken={setToken} setPage={setPage} />
+      )}
+
+      {page === 'recommendations' && (
+        <Recommendations />
       )}
     </div>
   );

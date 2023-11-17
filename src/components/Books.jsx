@@ -33,7 +33,7 @@ const Books = () => {
 
   return (
     <div>
-      <p>Sort by genre:</p>
+      <p>Sort by genre</p>
       <div>
         {uniqueGenres.map((genre) => (
           <button key={genre} onClick={() => setSelectedGenre(genre)}>
