@@ -1,46 +1,46 @@
 import { ALL_BOOKS } from '../queries';
 import { useQuery } from '@apollo/client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Books = () => {
-  const result = useQuery(ALL_BOOKS);
-  const [selectedGenre, setSelectedGenre] = useState(null);
-  const books = result.data ? result.data.allBooks : [];
+  const { loading, error, data } = useQuery(ALL_BOOKS);
+  const [selectedGenre, setSelectedGenre] = useState('');
+  const [uniqueGenres, setUniqueGenres] = useState([]);
 
-  if (result.loading) {
-    return <div>loading...</div>;
+  useEffect(() => {
+    if (data && data.allBooks) {
+      const genresArr = data.allBooks.reduce(
+        (genres, book) => (book.genres ? genres.concat(book.genres) : genres),
+        []
+      );
+
+      const uniqueGenres = [...new Set(genresArr)];
+      setUniqueGenres(uniqueGenres);
+    }
+  }, [data]);
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
-  if (result.error) {
-    return <div>ERROR: {result.error.message}</div>;
+  if (error) {
+    return <div>Error: {error.message}</div>;
   }
 
-  const allBooks = result.data.allBooks;
-
-  const genresArr = allBooks.reduce(
-    (genres, book) =>
-      book.genres ? genres.concat(book.genres) : genres,
-    []
-  );
-
-  const uniqueGenres = [...new Set(genresArr)];
-
-  const booksToShow = selectedGenre
-    ? allBooks.filter((book) => book.genres.includes(selectedGenre))
-    : allBooks;
-
-    console.log('Unique Genres:', uniqueGenres);
+  const books = selectedGenre
+    ? data.allBooks.filter((book) => book.genres.includes(selectedGenre))
+    : data.allBooks;
 
   return (
     <div>
-      <p>Sort by genre</p>
+      <p>Sort by genre: {selectedGenre ? selectedGenre : 'all genres'}</p>
       <div>
         {uniqueGenres.map((genre) => (
           <button key={genre} onClick={() => setSelectedGenre(genre)}>
             {genre}
           </button>
         ))}
-        <button onClick={() => setSelectedGenre(null)}>Show all books</button>
+        <button onClick={() => setSelectedGenre('')}>Show all books</button>
       </div>
 
       <h2>Books</h2>
@@ -51,7 +51,7 @@ const Books = () => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {booksToShow.map((book) => (
+          {books.map((book) => (
             <tr key={book.title}>
               <td>{book.title}</td>
               <td>{book.author.name}</td>
